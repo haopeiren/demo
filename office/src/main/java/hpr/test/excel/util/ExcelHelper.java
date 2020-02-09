@@ -3,6 +3,7 @@ package hpr.test.excel.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -63,16 +64,17 @@ public class ExcelHelper
     {
         row.cellIterator().forEachRemaining(cell ->
         {
-            if (cell != null && !StringUtils.isEmpty(cell.getStringCellValue()))
+            if (cell != null)
             {
-                parseCell(row, cell);
+                parseAndUpdateCell(row, cell);
             }
         });
     }
 
     public void parseAndUpdateCell(Row row, Cell cell)
     {
-        String str = cell.getStringCellValue();
+//        String str = cell.getStringCellValue();
+//        CellType cellType = cell.getCellType();
         cell.setCellValue("test");
     }
 }
