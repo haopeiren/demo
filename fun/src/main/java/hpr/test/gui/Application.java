@@ -28,9 +28,25 @@ public class Application
 
     public static void main(String[] args)
     {
+        if (args != null)
+        {
+            if (args[0].equalsIgnoreCase("1"))
+            {
+                run();
+            }
+            else if (args[0].equalsIgnoreCase("2"))
+            {
+                new FoodChoose(args);
+            }
+        }
+    }
+
+    private static void run()
+    {
         int size = NO_MESSAGE.length;
         AtomicInteger index = new AtomicInteger(0);
         JFrame frame = new JFrame("真心话");
+        frame.setResizable(false);
         frame.setSize(MAIN_WIDTH, MAIN_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setLocationRelativeTo(null);
