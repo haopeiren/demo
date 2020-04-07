@@ -1,8 +1,12 @@
 package hpr.test.excel.util;
 
+import hpr.test.excel.model.RCol;
+import hpr.test.excel.model.RRow;
+import hpr.test.excel.model.RSheet;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -10,7 +14,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author haopeiren
@@ -20,15 +26,16 @@ import java.util.Iterator;
 @UtilityClass
 public class ExcelHelper
 {
-    public void parseExcel(String filePath, String fileOut) throws IOException
+    public List<RSheet> parseExcel(String filePath) throws IOException
     {
         log.info("start to parse file : " + filePath);
-        parseExcel(new FileInputStream(filePath), new FileOutputStream(fileOut));
-        log.info("parse end : " + filePath);
+        List<RSheet> sheetList = parseExcel(new FileInputStream(filePath));
+        return sheetList;
     }
 
-    public void parseExcel(FileInputStream fis, FileOutputStream fos) throws IOException
+    public List<RSheet> parseExcel(FileInputStream fis) throws IOException
     {
+        List<RSheet> rSheetList = new ArrayList<>();
         XSSFWorkbook workbook = new XSSFWorkbook(fis);
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
         while (sheetIterator.hasNext())
@@ -36,16 +43,16 @@ public class ExcelHelper
             Sheet sheet = sheetIterator.next();
             if (sheet != null)
             {
-                parseSheet(sheet);
+                rSheetList.add(parseSheet(sheet));
             }
         }
-        workbook.write(fos);
-        fos.close();
-        workbook.close();
+        return rSheetList;
     }
 
-    public void parseSheet(Sheet sheet)
+    public RSheet parseSheet(Sheet sheet)
     {
+        RSheet rSheet = new RSheet();
+        List<RRow> rowList = new ArrayList<>();
         log.info("start to parse sheet : " + sheet.getSheetName());
         int rowCount = sheet.getPhysicalNumberOfRows();
         for (int i = 0; i < rowCount; i++)
@@ -53,26 +60,31 @@ public class ExcelHelper
             Row row = sheet.getRow(i);
             if (row != null)
             {
-                parseRow(row);
+                rowList.add(parseRow(row));
             }
         }
+        rSheet.setRowList(rowList);
+        return rSheet;
     }
 
-    public void parseRow(Row row)
+    public RRow parseRow(Row row)
     {
-        row.cellIterator().forEachRemaining(cell ->
+        RRow rRow = new RRow();
+        List<RCol> colList = new ArrayList<>();
+        row.cellIterator().forEachRemaining(col ->
         {
-            if (cell != null)
+            RCol rCol = new RCol();
+            if (col.getCellType() == CellType.NUMERIC)
             {
-                parseAndUpdateCell(row, cell);
+                rCol.setContent(col.getNumericCellValue() + "");
             }
+            else
+            {
+                rCol.setContent(col.getStringCellValue());
+            }
+            colList.add(rCol);
         });
-    }
-
-    public void parseAndUpdateCell(Row row, Cell cell)
-    {
-//        String str = cell.getStringCellValue();
-//        CellType cellType = cell.getCellType();
-        cell.setCellValue("test");
+        rRow.setColList(colList);
+        return rRow;
     }
 }

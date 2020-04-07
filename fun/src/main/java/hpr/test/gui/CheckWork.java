@@ -53,7 +53,7 @@ public class CheckWork
         fos = new FileOutputStream(outFile);
         osw = new OutputStreamWriter(fos);
         bw = new BufferedWriter(osw);
-//        excelPath = "D:/教育学院王婉轶_考勤报表_20200229.xlsx";
+        excelPath = "D:/temp.xlsx";
         List<RSheet> rSheetList = getList(excelPath);
         RSheet rSheet = rSheetList.get(2);
         check(rSheet);
@@ -261,7 +261,7 @@ public class CheckWork
             bw.newLine();
             return;
         }
-        if (temp <= 35.5 || temp >= 37)
+        if (temp <= 35 || temp >= 37)
         {
             System.out.println(studentName + " 温度异常 ：" + temp);
             bw.write(studentName + " 温度异常 ：" + temp);
@@ -362,10 +362,10 @@ public class CheckWork
         return -1;
     }
 
-    public static List<RSheet> getList(String excelPath)
+    public static List<RSheet> getList(String excelPath) throws IOException
     {
         List<RSheet> rSheetList = null;
-//            rSheetList = ExcelHelper.parseExcel(excelPath);
+        rSheetList = ExcelHelper.parseExcel(excelPath);
         return rSheetList;
     }
 
